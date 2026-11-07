@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Anomaly Zone - Кордон</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* Фоны */
+    #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+    #bg div {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      opacity: 0;
+      -webkit-transition: opacity 2s ease-in-out;
+      transition: opacity 2s ease-in-out;
+    }
+    #bg div.active { opacity: 1; }
+
+    .metal-frame {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 4;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.5);
+    }
+
+    .hud-scan {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      background-image: linear-gradient(transparent 30%, rgba(0,0,0,0.02) 31%);
+      background-size: 100% 6px;
+      opacity: 0.25;
+    }
+
+    .tips {
+      position: fixed;
+      left: 5%;
+      width: 90%;
+      bottom: 4%;
+      z-index: 6;
+      color: #ffdb99;
+      font-family: Inter, Consolas, monospace, sans-serif;
+      font-size: 16px;
+      text-align: center;
+    }
+    .tips h3 {
+      margin: 0 0 6px 0;
+      color: #ffb84d;
+      font-size: 16px;
+    }
+    #tipText { font-size: 16px; }
+
+    @media (min-width: 1600px) {
+      .tips, .tips h3, #tipText { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="bg">
+    <div class="active" style="background-image:url('img/1.png')"></div>
+    <div style="background-image:url('img/2.png')"></div>
+    <div style="background-image:url('img/3.png')"></div>
+  </div>
+
+  <div class="metal-frame"></div>
+  <div class="hud-scan"></div>
+
+  <div class="tips">
+    <h3>Совет:</h3>
+    <div id="tipText"></div>
+  </div>
+
+  <script>
+    // Смена фонов
+    var slides = document.querySelectorAll('#bg div');
+    var cur = 0;
+    setInterval(function () {
+      slides[cur].className = '';
+      cur = (cur + 1) % slides.length;
+      slides[cur].className = 'active';
+    }, 8000);
+
+    // Советы
+    var tips = [
+      'В Зоне нет случайностей — если нашёл артефакт слишком легко, значит, рядом что-то тебя уже ждёт.',
+      'Патроны — это валюта. Береги их, торгуй ими, но никогда не оставайся без пары магазинов в запасе.',
+      'Аномалия «Воронка» тянет вниз быстрее, чем успеешь выругаться. Болт в помощь — кидай, пока жив.',
+      'Не верь улыбкам наёмников. Их контракт всегда дороже твоей жизни.',
+      'Артефакт «Каменный цветок» красив, но радиоактивен — таскай с контейнером или умрёшь медленно.',
+      'Хабар в схронах редко лежит бесхозно — кто-то его туда положил и может вернуться.',
+      'Ночью в Зоне тишина громче выстрелов — прислушивайся, она подскажет, кто рядом.',
+      'Пси-излучение ломает не кости, а голову. Не недооценивай его.',
+      'Если услышал треск детектора — не суетись, а думай: артефакт рядом или ловушка?',
+      'Зона не любит глупых — будь хитрым, будь живым.'
+    ];
+
+    var tipIndex = 0;
+    var tipText = document.getElementById('tipText');
+
+    function showTip() {
+      tipText.textContent = tips[tipIndex];
+      tipIndex = (tipIndex + 1) % tips.length;
+    }
+
+    showTip();
+    setInterval(showTip, 30000);
+  </script>
+
+</body>
+</html>
