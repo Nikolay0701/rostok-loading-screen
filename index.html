@@ -14,7 +14,7 @@
       overflow: hidden;
     }
 
-    
+    /* Фоны */
     #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
     #bg div {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -64,64 +64,6 @@
     @media (min-width: 1600px) {
       .tips, .tips h3, #tipText { font-size: 20px; }
     }
-      .queue-hud {
-      position: fixed;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(18, 14, 10, 0.94);
-      border: 1px solid rgba(255, 184, 77, 0.7);
-      box-shadow: 0 0 30px rgba(255, 150, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.9);
-      padding: 24px 40px;
-      border-radius: 4px;
-      text-align: center;
-      font-family: Inter, Consolas, monospace, sans-serif;
-      color: #ffdb99;
-      z-index: 10;
-      display: none;
-      min-width: 320px;
-    }
-    .queue-hud h2 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      color: #ffb84d;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-bottom: 1px solid rgba(255, 184, 77, 0.25);
-      padding-bottom: 8px;
-    }
-    .queue-hud .pos-val {
-      font-size: 42px;
-      font-weight: bold;
-      color: #fff;
-      margin: 6px 0;
-      text-shadow: 0 0 12px rgba(255, 184, 77, 0.9);
-    }
-    .queue-hud .sub-val {
-      font-size: 14px;
-      color: #d8c29d;
-    }
-    .queue-hud .bar-wrap {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.12);
-      margin-top: 14px;
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
-    }
-    .queue-hud .bar-fill {
-      width: 40%;
-      height: 100%;
-      background: #ffb84d;
-      position: absolute;
-      animation: queueSlide 1.6s infinite ease-in-out;
-    }
-    @keyframes queueSlide {
-      0% { left: -40%; }
-      50% { left: 40%; }
-      100% { left: 100%; }
-    }
   </style>
 </head>
 <body>
@@ -135,20 +77,13 @@
   <div class="metal-frame"></div>
   <div class="hud-scan"></div>
 
-    <div id="queueHud" class="queue-hud">
-    <h2>Сервер заполнен</h2>
-    <div id="queuePos" class="pos-val">#1</div>
-    <div class="sub-val">Ожидание в очереди: <span id="queueTotal">1</span></div>
-    <div class="bar-wrap"><div class="bar-fill"></div></div>
-  </div>
-
   <div class="tips">
     <h3>Совет:</h3>
     <div id="tipText"></div>
   </div>
 
   <script>
-
+    // Смена фонов
     var slides = document.querySelectorAll('#bg div');
     var cur = 0;
     setInterval(function () {
@@ -256,63 +191,6 @@
 
     showTip();
     setInterval(showTip, 30000);
-      (function () {
-      function getParam(name) {
-        var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-        return match ? decodeURIComponent(match[1]) : null;
-      }
-
-      var steamid = getParam('steamid');
-      var serverip = getParam('serverip') || '127.0.0.1';
-      var serverport = getParam('serverport') || '27080';
-
-      var oldGameDetails = window.GameDetails;
-      window.GameDetails = function (serverName, serverURL, mapName, maxPlayers, steamID64, gameMode) {
-        if (steamID64 && !steamid) {
-          steamid = steamID64;
-        }
-        if (serverURL) {
-          var m = serverURL.match(/https?:\/\/([^:\/]+)/);
-          if (m && m[1]) {
-            serverip = m[1];
-          }
-        }
-        if (typeof oldGameDetails === 'function') {
-          oldGameDetails(serverName, serverURL, mapName, maxPlayers, steamID64, gameMode);
-        }
-      };
-
-      var hud = document.getElementById('queueHud');
-      var posEl = document.getElementById('queuePos');
-      var totalEl = document.getElementById('queueTotal');
-
-      function pollQueue() {
-        if (!steamid) return;
-        var url = 'http://' + serverip + ':' + serverport + '/queue_status?steamid=' + encodeURIComponent(steamid);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.timeout = 2000;
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            try {
-              var data = JSON.parse(xhr.responseText);
-              if (data && data.in_queue) {
-                hud.style.display = 'block';
-                posEl.textContent = '#' + data.position;
-                totalEl.textContent = data.total;
-              } else {
-                hud.style.display = 'none';
-              }
-            } catch (err) {}
-          }
-        };
-        xhr.onerror = function () {};
-        xhr.send();
-      }
-
-      setInterval(pollQueue, 2000);
-      setTimeout(pollQueue, 500);
-    })();
   </script>
 
 </body>
